@@ -1,4 +1,5 @@
-﻿using Adapters.Gateways.Payments;
+﻿using Adapters.Gateways.Orders;
+using Adapters.Gateways.Payments;
 using External.Clients;
 using External.Persistence;
 using External.Persistence.Migrations;
@@ -23,6 +24,7 @@ public static class ExternalExtensions
 
         services.AddScoped<IPaymentRepository, PaymentRepository>();
 
+        services.AddScoped<IOrderClient, OrderClient>();
         services.AddScoped<IPaymentClient, MercadoPagoClient>();
 
         return services;

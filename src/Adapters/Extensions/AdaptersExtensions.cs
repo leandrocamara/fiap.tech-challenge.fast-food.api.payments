@@ -1,4 +1,5 @@
 ﻿using Adapters.Controllers;
+using Adapters.Gateways.Orders;
 using Adapters.Gateways.Payments;
 using Application.Gateways;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ public static class AdaptersExtensions
         services.AddScoped<IPaymentController, PaymentController>();
 
         services.AddScoped<IPaymentGateway, PaymentGateway>();
+        services.AddScoped<IOrderGateway, OrderGateway>();
 
         return services;
     }
