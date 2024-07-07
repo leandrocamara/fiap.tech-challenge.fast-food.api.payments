@@ -6,4 +6,21 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Adapters\Adapters.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentMigrator" Version="5.0.0" />
+        <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0-preview.5.24306.7" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Persistence\Migrations\Scripts\*.sql" />
+    </ItemGroup>
+
 </Project>
