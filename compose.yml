@@ -7,16 +7,16 @@ networks:
 services:
   database:
     image: postgres:latest
-    container_name: fastfood_database
+    container_name: payments_database
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=payments_db
     restart: always
     volumes:
-      - fastfood_data:/var/lib/postgresql/data
+      - payments_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 2s
@@ -27,13 +27,13 @@ services:
 
   api:
     build: .
-    container_name: fastfood_api
+    container_name: payments_api
     ports:
-      - "8080:8080"
+      - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__Default=Server=database;Database=postgres;Username=postgres;Password=docker;Port=5432
+      - ASPNETCORE_HTTP_PORTS=5001
+      - ConnectionStrings__Default=Server=database;Database=payments_db;Username=postgres;Password=docker;Port=5432
     depends_on:
       database:
         condition: service_healthy
@@ -41,5 +41,5 @@ services:
       - dev
 
 volumes:
-  fastfood_data:
-    name: "fastfood_data"
+  payments_data:
+    name: "payments_data"
