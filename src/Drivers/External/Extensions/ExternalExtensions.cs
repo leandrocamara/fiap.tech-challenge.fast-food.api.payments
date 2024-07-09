@@ -1,10 +1,14 @@
 ﻿using Adapters.Gateways.Orders;
 using Adapters.Gateways.Payments;
+using Amazon;
+using Amazon.Runtime;
 using External.Clients;
 using External.Persistence;
 using External.Persistence.Migrations;
 using External.Persistence.Repositories;
+using External.Settings;
 using FluentMigrator.Runner;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +31,48 @@ public static class ExternalExtensions
         services.AddScoped<IOrderClient, OrderClient>();
         services.AddScoped<IPaymentClient, MercadoPagoClient>();
 
+        SetupAmazonSqs(services, configuration);
+
         return services;
+    }
+
+    private static void SetupAmazonSqs(IServiceCollection services, IConfiguration configuration)
+    {
+        var settings = GetAmazonSqsSettings(configuration);
+
+        services.AddMassTransit(x =>
+        {
+            x.UsingAmazonSqs((context, cfg) =>
+            {
+                cfg.Host(new Uri($"{settings.Host}://{settings.Region}"), h =>
+                {
+                    h.AccessKey(settings.AccessKey);
+                    h.SecretKey(settings.SecretKey);
+                });
+            });
+        });
+    }
+
+    public static IHealthChecksBuilder AddSqsHealthCheck(
+        this IHealthChecksBuilder builder, IConfiguration configuration)
+    {
+        var settings = GetAmazonSqsSettings(configuration);
+
+        return builder.AddSqs(options =>
+        {
+            options.Credentials = new BasicAWSCredentials(settings.AccessKey, settings.SecretKey);
+            options.RegionEndpoint = RegionEndpoint.GetBySystemName(settings.Region);
+        }, name: "sqs_health_check", tags: new[] { "sqs", "healthcheck" });
+    }
+
+    private static AmazonSqsSettings GetAmazonSqsSettings(IConfiguration configuration)
+    {
+        var settings = configuration.GetSection(nameof(AmazonSqsSettings)).Get<AmazonSqsSettings>();
+
+        if (settings is null)
+            throw new ArgumentException($"{nameof(AmazonSqsSettings)} not found.");
+
+        return settings;
     }
 
     public static void CreateDatabase(this IApplicationBuilder _, IConfiguration configuration)

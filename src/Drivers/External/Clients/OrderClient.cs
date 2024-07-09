@@ -1,12 +1,20 @@
 ﻿using Adapters.Gateways.Orders;
+using MassTransit;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace External.Clients;
 
-public class OrderClient : IOrderClient
+public class OrderClient(ISendEndpointProvider sendEndpointProvider, ILogger<OrderClient> logger) : IOrderClient
 {
-    public Task UpdateStatusOrder(UpdatePaymentStatusRequest request)
+    private const string QueueName = "ticket-created";
+
+    public async Task UpdateStatusOrder(UpdatePaymentStatusRequest request)
     {
-        // TODO: Publish by SQS
-        throw new NotImplementedException();
+        logger.LogInformation("Publishing message: {Text}", JsonConvert.SerializeObject(request));
+
+        var endpoint = await sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{QueueName}"));
+
+        await endpoint.Send(request);
     }
 }
