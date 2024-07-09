@@ -4,9 +4,9 @@ namespace External.Clients;
 
 public class OrderClient : IOrderClient
 {
-    public Task UpdateStatusOrder()
+    public Task UpdateStatusOrder(UpdatePaymentStatusRequest request)
     {
-        // TODO: HTTP or Messaging
+        // TODO: Publish by SQS
         throw new NotImplementedException();
     }
 }

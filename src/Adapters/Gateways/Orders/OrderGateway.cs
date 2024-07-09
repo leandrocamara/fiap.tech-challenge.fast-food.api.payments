@@ -5,18 +5,9 @@ namespace Adapters.Gateways.Orders;
 
 public class OrderGateway(IOrderClient orderClient) : IOrderGateway
 {
-    public Task UpdateStatusOrder(Guid orderId, PaymentStatus paymentStatus)
+    public Task UpdateStatusOrder(Payment payment)
     {
-        var orderStatus = paymentStatus.IsPaid()
-            ? EOrderStatus.Paid
-            : EOrderStatus.Failed;
-
-        throw new NotImplementedException();
-    }
-
-    public enum EOrderStatus : short
-    {
-        Paid = 1,
-        Failed = 2
+        var request = new UpdatePaymentStatusRequest(payment.OrderId, payment.Status.IsPaid());
+        return orderClient.UpdateStatusOrder(request);
     }
 }

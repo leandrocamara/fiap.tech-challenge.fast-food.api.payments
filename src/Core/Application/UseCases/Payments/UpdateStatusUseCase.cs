@@ -21,7 +21,7 @@ public sealed class UpdateStatusUseCase(
             payment.UpdateStatus(request.Paid);
             paymentGateway.Update(payment);
 
-            await orderGateway.UpdateStatusOrder(payment.OrderId, payment.Status);
+            await orderGateway.UpdateStatusOrder(payment);
 
             return true;
         }

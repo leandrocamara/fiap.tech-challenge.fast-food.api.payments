@@ -4,5 +4,5 @@ namespace Application.Gateways;
 
 public interface IOrderGateway
 {
-    Task UpdateStatusOrder(Guid orderId, PaymentStatus paymentStatus);
+    Task UpdateStatusOrder(Payment payment);
 }
