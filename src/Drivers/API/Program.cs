@@ -1,4 +1,5 @@
 using Adapters.Extensions;
+using API.Filters;
 using API.HealthChecks;
 using Application.Extensions;
 using External.Extensions;
@@ -14,7 +15,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.EnableAnnotations();
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<TransactionalContextFilter>();
+});
 
 builder.Services.AddExternalDependencies(configuration);
 builder.Services.AddAdaptersDependencies();

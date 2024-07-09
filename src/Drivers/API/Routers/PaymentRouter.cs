@@ -19,13 +19,13 @@ public class PaymentRouter(IPaymentController controller) : BaseRouter
         return HttpResponse(result);
     }
 
-    [HttpPut("{id}/status")]
+    [HttpPut("{id:guid}/status/{paid:bool}")]
     [SwaggerResponse(StatusCodes.Status200OK)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateStatusPayment(UpdateStatusRequest request)
+    public async Task<IActionResult> UpdateStatusPayment([FromRoute] Guid id, [FromRoute] bool paid)
     {
-        var result = await controller.UpdateStatus(request);
+        var result = await controller.UpdateStatus(new UpdateStatusRequest(id, paid));
         return HttpResponse(result);
     }
 }

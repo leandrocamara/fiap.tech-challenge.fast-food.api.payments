@@ -6,6 +6,8 @@ internal sealed class PaymentValidator : IValidator<Payment>
 {
     public bool IsValid(Payment payment, out string error)
     {
-        throw new NotImplementedException();
+        // TODO: Implement
+        error = string.Empty;
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 USER $APP_UID
 WORKDIR /app
 EXPOSE 5001
-EXPOSE 8081
+EXPOSE 8082
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 

@@ -18,7 +18,8 @@ public sealed class CreatePaymentUseCase(IPaymentGateway paymentGateway) : ICrea
             payment.SetQrCode(qrCode);
             paymentGateway.Save(payment);
 
-            return new CreatePaymentResponse(payment);
+            var pngQrCode = await paymentGateway.ConvertToPngQrCode(payment);
+            return new CreatePaymentResponse(payment.Id, pngQrCode);
         }
         catch (DomainException e)
         {
@@ -29,4 +30,4 @@ public sealed class CreatePaymentUseCase(IPaymentGateway paymentGateway) : ICrea
 
 public record CreatePaymentRequest(Guid OrderId, decimal Amount);
 
-public record CreatePaymentResponse(Payment Payment);
+public record CreatePaymentResponse(Guid Id, string QrCode);

@@ -7,7 +7,7 @@ namespace External.Clients;
 
 public class OrderClient(ISendEndpointProvider sendEndpointProvider, ILogger<OrderClient> logger) : IOrderClient
 {
-    private const string QueueName = "ticket-created";
+    private const string QueueName = "payment-updated";
 
     public async Task UpdateStatusOrder(UpdatePaymentStatusRequest request)
     {

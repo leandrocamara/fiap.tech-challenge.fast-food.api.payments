@@ -28,6 +28,7 @@ public static class ExternalExtensions
 
         services.AddScoped<IPaymentRepository, PaymentRepository>();
 
+        services.AddHttpClient();
         services.AddScoped<IOrderClient, OrderClient>();
         services.AddScoped<IPaymentClient, MercadoPagoClient>();
 
@@ -44,7 +45,7 @@ public static class ExternalExtensions
         {
             x.UsingAmazonSqs((context, cfg) =>
             {
-                cfg.Host(new Uri($"{settings.Host}://{settings.Region}"), h =>
+                cfg.Host(new Uri($"amazonsqs://{settings.Region}"), h =>
                 {
                     h.Credentials(new SessionAWSCredentials(
                         settings.AccessKey,

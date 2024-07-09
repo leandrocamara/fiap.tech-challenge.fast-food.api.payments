@@ -8,5 +8,6 @@ namespace Application.Gateways
         Payment? GetById(Guid id);
         void Update(Payment payment);
         Task<string> GenerateQrCode(Payment payment);
+        Task<string> ConvertToPngQrCode(Payment payment);
     }
 }
