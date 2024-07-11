@@ -2,13 +2,13 @@
 using Adapters.Gateways.Payments;
 using Amazon;
 using Amazon.Runtime;
+using Amazon.SQS;
 using External.Clients;
 using External.Persistence;
 using External.Persistence.Migrations;
 using External.Persistence.Repositories;
 using External.Settings;
 using FluentMigrator.Runner;
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,20 +40,10 @@ public static class ExternalExtensions
     private static void SetupAmazonSqs(IServiceCollection services, IConfiguration configuration)
     {
         var settings = GetAmazonSqsSettings(configuration);
-
-        services.AddMassTransit(x =>
-        {
-            x.UsingAmazonSqs((context, cfg) =>
-            {
-                cfg.Host(new Uri($"amazonsqs://{settings.Region}"), h =>
-                {
-                    h.Credentials(new SessionAWSCredentials(
-                        settings.AccessKey,
-                        settings.SecretKey,
-                        settings.SessionToken));
-                });
-            });
-        });
+        
+        services.AddSingleton<IAmazonSQS>(_ => new AmazonSQSClient(
+            new SessionAWSCredentials(settings.AccessKey, settings.SecretKey, settings.SessionToken),
+            new AmazonSQSConfig { RegionEndpoint = RegionEndpoint.GetBySystemName(settings.Region) }));
     }
 
     public static IHealthChecksBuilder AddSqsHealthCheck(
@@ -63,7 +53,10 @@ public static class ExternalExtensions
 
         return builder.AddSqs(options =>
         {
-            options.Credentials = new BasicAWSCredentials(settings.AccessKey, settings.SecretKey);
+            options.Credentials = new SessionAWSCredentials(
+                settings.AccessKey,
+                settings.SecretKey,
+                settings.SessionToken);
             options.RegionEndpoint = RegionEndpoint.GetBySystemName(settings.Region);
         }, name: "sqs_health_check", tags: new[] { "sqs", "healthcheck" });
     }
