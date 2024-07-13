@@ -1,0 +1,45 @@
+﻿version: '3.9'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  database:
+    image: postgres:latest
+    container_name: payments_database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=payments_db
+    restart: always
+    volumes:
+      - payments_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+    networks:
+      - dev
+
+  api:
+    build: .
+    container_name: payments_api
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5001
+      - ConnectionStrings__Default=Server=database;Database=payments_db;Username=postgres;Password=docker;Port=5432
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - dev
+
+volumes:
+  payments_data:
+    name: "payments_data"
