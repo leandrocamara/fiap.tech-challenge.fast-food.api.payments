@@ -19,6 +19,16 @@ public class PaymentRouter(IPaymentController controller) : BaseRouter
         return HttpResponse(result);
     }
 
+    [HttpGet]
+    [SwaggerResponse(StatusCodes.Status200OK, "Retorna o pagamento de acordo com o OrderId informado", typeof(GetPaymentByOrderIdResponse))]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetPaymentByOrderId([FromQuery] Guid orderId)
+    {
+        var result = await controller.GetPaymentByOrderId(orderId);
+        return HttpResponse(result);
+    }
+
     [HttpPut("{id:guid}/status/{paid:bool}")]
     [SwaggerResponse(StatusCodes.Status200OK)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
