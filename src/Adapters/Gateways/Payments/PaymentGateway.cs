@@ -13,6 +13,9 @@ public class PaymentGateway(
 
     public void Update(Payment payment) => repository.Update(payment);
 
+    public Task<Payment?> GetByOrderId(Guid orderId) => repository.GetByOrderId(orderId);
+
     public Task<string> GenerateQrCode(Payment payment) => client.GenerateQrCode(payment);
+
     public Task<string> ConvertToPngQrCode(Payment payment) => client.ConvertToPngQrCode(payment);
 }

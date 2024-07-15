@@ -8,6 +8,7 @@ public static class ApplicationExtensions
     public static IServiceCollection AddApplicationDependencies(this IServiceCollection services)
     {
         services.AddScoped<ICreatePaymentUseCase, CreatePaymentUseCase>();
+        services.AddScoped<IGetPaymentByOrderIdUseCase, GetPaymentByOrderIdUseCase>();
         services.AddScoped<IUpdateStatusUseCase, UpdateStatusUseCase>();
 
         return services;
