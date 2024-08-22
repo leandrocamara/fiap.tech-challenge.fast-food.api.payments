@@ -7,4 +7,4 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: "#{ENVIRONMENT}#"
   ASPNETCORE_HTTP_PORTS: "8080"
-  AmazonSqsSettings__Region: "#{AWS_REGION}#"
+  AmazonSettings__Region: "#{AWS_REGION}#"

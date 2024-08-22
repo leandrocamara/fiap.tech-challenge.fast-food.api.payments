@@ -3,13 +3,13 @@ using Entities.SeedWork;
 
 namespace Application.UseCases.Payments;
 
-public interface IUpdateStatusUseCase : IUseCase<UpdateStatusRequest, bool>;
+public interface IUpdateStatusUseCase : IUseCase<UpdateStatusRequest, UpdateStatusResponse>;
 
 public sealed class UpdateStatusUseCase(
     IPaymentGateway paymentGateway,
     IOrderGateway orderGateway) : IUpdateStatusUseCase
 {
-    public async Task<bool> Execute(UpdateStatusRequest request)
+    public async Task<UpdateStatusResponse> Execute(UpdateStatusRequest request)
     {
         try
         {
@@ -23,7 +23,7 @@ public sealed class UpdateStatusUseCase(
 
             await orderGateway.UpdateStatusOrder(payment);
 
-            return true;
+            return new UpdateStatusResponse(payment.Id, payment.OrderId, payment.Status);
         }
         catch (DomainException e)
         {
@@ -33,3 +33,5 @@ public sealed class UpdateStatusUseCase(
 }
 
 public record UpdateStatusRequest(Guid Id, bool Paid);
+
+public record UpdateStatusResponse(Guid Id, Guid OrderId, string Status);

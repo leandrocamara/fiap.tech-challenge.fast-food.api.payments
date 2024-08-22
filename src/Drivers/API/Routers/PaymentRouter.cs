@@ -30,7 +30,7 @@ public class PaymentRouter(IPaymentController controller) : BaseRouter
     }
 
     [HttpPut("{id:guid}/status/{paid:bool}")]
-    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status200OK, "", typeof(UpdateStatusResponse))]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateStatusPayment([FromRoute] Guid id, [FromRoute] bool paid)
